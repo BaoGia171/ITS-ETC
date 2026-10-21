@@ -1,13 +1,8 @@
-"""Phần 6.1 — Tạo và kiểm tra dữ liệu giả lập.
-Chạy: python TV2/tao_du_lieu.py
-Chỉ dùng thư viện có sẵn của Python. Không có dữ liệu cá nhân thật.
-"""
 import csv
 from pathlib import Path
 
 
 def tao_danh_sach_xe():
-    """Danh sách đăng ký: mỗi xe có một mã thẻ và một biển số."""
     return [
         {"ma_xe": f"XE{i:02}", "ma_the": f"TAG{i:03}", "bien_so": f"51A-{10000+i}"}
         for i in range(1, 7)
@@ -15,9 +10,7 @@ def tao_danh_sach_xe():
 
 
 def tao_luot_xe():
-    """Mã thẻ/biển số bên dưới là kết quả đọc giả lập, không đọc từ thiết bị."""
     mau = [
-        # Kịch bản, xe thực tế, thẻ nhận được, biển số nhận được
         ("hai_nguon_dung", "XE01", "TAG001", "51A-10001"),
         ("hai_nguon_dung", "XE04", "TAG004", "51A-10004"),
         ("thieu_rfid", "XE01", "", "51A-10001"),
@@ -44,7 +37,6 @@ def tao_luot_xe():
 
 
 def kiem_tra_du_lieu(danh_sach_xe, luot_xe):
-    """Thông tin đăng ký phải đủ và duy nhất; dữ liệu đọc có thể thiếu hoặc sai."""
     if not danh_sach_xe or not luot_xe:
         raise ValueError("Danh sách xe và lượt xe không được rỗng.")
 
@@ -72,8 +64,6 @@ def kiem_tra_du_lieu(danh_sach_xe, luot_xe):
         if luot["xe_thuc_te"] not in cac_ma_xe:
             raise ValueError(f"Xe thực tế chưa có trong danh sách: {luot['xe_thuc_te']}.")
         cac_ma_luot.add(luot["ma_luot"])
-        # Không bác bỏ thẻ/biển số đọc sai, lạ hoặc trống:
-        # đây là các tình huống cần đưa cho ba phương án xử lý.
 
 
 def ghi_csv(duong_dan, cac_dong):
