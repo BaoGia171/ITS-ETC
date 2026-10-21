@@ -1,0 +1,13 @@
+﻿ma_luot,kich_ban,xe_thuc_te,rfid_nhan_duoc,bien_so_nhan_duoc
+L01,hai_nguon_dung,XE01,TAG001,51A-10001
+L02,hai_nguon_dung,XE04,TAG004,51A-10004
+L03,thieu_rfid,XE01,,51A-10001
+L04,thieu_bien_so,XE02,TAG002,
+L05,thieu_ca_hai,XE03,,
+L06,rfid_sai_bien_so_dung,XE01,TAG002,51A-10001
+L07,rfid_dung_bien_so_sai,XE02,TAG002,51A-10003
+L08,hai_nguon_sai_khong_khop,XE01,TAG002,51A-10003
+L09,hai_nguon_cung_khop_sai,XE01,TAG002,51A-10002
+L10,the_chua_dang_ky,XE04,TAG999,51A-10004
+L11,bien_so_chua_dang_ky,XE05,TAG005,99Z-99999
+L12,ca_hai_chua_dang_ky,XE06,TAG999,99Z-99999
