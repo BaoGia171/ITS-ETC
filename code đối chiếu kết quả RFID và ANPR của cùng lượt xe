@@ -1,0 +1,197 @@
+
+# ============================================================
+# PHAN 6.4: MO PHONG PHOI HOP HAI NGUON RFID VA ANPR/LPR
+# Thanh vien: Van Ngo Hoang Phuc (TV4)
+# ============================================================
+
+# 1. DANH SACH MA THE RFID VA BIEN SO XE
+rfid_database = {
+    "RFID001": "51A-12345",
+    "RFID002": "59B-67890",
+    "RFID003": "60C-24680"
+}
+
+
+# 2. DU LIEU KET QUA TU HE THONG RFID (MUC 6.2)
+rfid_results = [
+    {"ma_luot": "LT001", "ma_the": "RFID001"},
+    {"ma_luot": "LT002", "ma_the": "RFID002"},
+    {"ma_luot": "LT003", "ma_the": "RFID003"},
+    {"ma_luot": "LT004", "ma_the": "RFID001"},
+    {"ma_luot": "LT005", "ma_the": "RFID999"},
+    {"ma_luot": "LT006", "ma_the": "RFID002"}
+]
+
+
+# 3. DU LIEU KET QUA TU HE THONG ANPR/LPR (MUC 6.3)
+anpr_results = [
+    {"ma_luot": "LT001", "bien_so": "51A-12345"},
+    {"ma_luot": "LT002", "bien_so": "59B-67890"},
+    {"ma_luot": "LT003", "bien_so": "60C-24680"},
+    {"ma_luot": "LT004", "bien_so": "51A-99999"},
+    {"ma_luot": "LT005", "bien_so": "51A-12345"},
+    {"ma_luot": "LT006", "bien_so": None}
+]
+
+
+# 4. CHUAN HOA BIEN SO XE
+def chuan_hoa_bien_so(bien_so):
+    if not bien_so:
+        return None
+
+    return "".join(
+        bien_so.upper().split()
+    ).replace("-", "").replace(".", "")
+
+
+# 5. HAM TRA CUU BIEN SO TU MA THE RFID
+def tra_cuu_rfid(ma_the):
+    return rfid_database.get(ma_the)
+
+
+# 6. HAM PHOI HOP HAI NGUON
+def doi_chieu_hai_nguon(rfid_results, anpr_results):
+
+    # Tao bang tra cuu theo ma_luot
+    bang_rfid = {
+        item["ma_luot"]: item
+        for item in rfid_results
+    }
+
+    bang_anpr = {
+        item["ma_luot"]: item
+        for item in anpr_results
+    }
+
+    # Lay tat ca ma_luot cua hai nguon
+    danh_sach_ma_luot = sorted(
+        set(bang_rfid.keys()) | set(bang_anpr.keys())
+    )
+
+    ket_qua = []
+
+    for ma_luot in danh_sach_ma_luot:
+
+        rfid = bang_rfid.get(ma_luot)
+        anpr = bang_anpr.get(ma_luot)
+
+        # Lay bien so tu RFID
+        bien_so_rfid = None
+        if rfid:
+            bien_so_rfid = tra_cuu_rfid(rfid["ma_the"])
+
+        # Lay bien so tu ANPR
+        bien_so_anpr = anpr.get("bien_so") if anpr else None
+
+        # Chuan hoa de so sanh
+        bs_rfid = chuan_hoa_bien_so(bien_so_rfid)
+        bs_anpr = chuan_hoa_bien_so(bien_so_anpr)
+
+        # XU LY CAC TRUONG HOP
+        if rfid is None and anpr is None:
+            trang_thai = "KHONG_CO_DU_LIEU"
+            ket_luan = "Xac minh thu cong"
+
+        elif rfid is None:
+            trang_thai = "THIEU_RFID"
+            ket_luan = "Xac minh thu cong"
+
+        elif anpr is None:
+            trang_thai = "THIEU_ANPR"
+            ket_luan = "Xac minh thu cong"
+
+        elif bs_rfid is None and bs_anpr is None:
+            trang_thai = "CA_HAI_KHONG_NHAN_DIEN"
+            ket_luan = "Xac minh thu cong"
+
+        elif bs_rfid is None:
+            trang_thai = "RFID_KHONG_HOP_LE"
+            ket_luan = "Xac minh thu cong"
+
+        elif bs_anpr is None:
+            trang_thai = "ANPR_KHONG_NHAN_DIEN"
+            ket_luan = "Xac minh thu cong"
+
+        elif bs_rfid == bs_anpr:
+            trang_thai = "KHOP"
+            ket_luan = "XAC NHAN GIAO DICH"
+
+        else:
+            trang_thai = "KHONG_KHOP"
+            ket_luan = "Xac minh thu cong"
+
+        # Luu ket qua
+        ket_qua.append({
+            "ma_luot": ma_luot,
+            "bien_so_rfid": bien_so_rfid,
+            "bien_so_anpr": bien_so_anpr,
+            "trang_thai": trang_thai,
+            "ket_luan": ket_luan
+        })
+
+    return ket_qua
+
+
+# 7. HIEN THI BANG KET QUA
+def hien_thi_ket_qua(ket_qua):
+
+    print("\n" + "=" * 105)
+    print(" MO PHONG PHOI HOP RFID VA ANPR/LPR - MUC 6.4")
+    print("=" * 105)
+
+    print(
+        f"{'MA LUOT':<12}"
+        f"{'BIEN SO RFID':<20}"
+        f"{'BIEN SO ANPR':<20}"
+        f"{'TRANG THAI':<30}"
+        f"{'KET LUAN'}"
+    )
+
+    print("-" * 105)
+
+    for item in ket_qua:
+        print(
+            f"{item['ma_luot']:<12}"
+            f"{str(item['bien_so_rfid'] or 'Khong co'):<20}"
+            f"{str(item['bien_so_anpr'] or 'Khong co'):<20}"
+            f"{item['trang_thai']:<30}"
+            f"{item['ket_luan']}"
+        )
+
+    print("=" * 105)
+
+
+# 8. THONG KE KET QUA KIEM THU
+def thong_ke(ket_qua):
+
+    tong = len(ket_qua)
+
+    hop_le = sum(
+        1 for item in ket_qua
+        if item["trang_thai"] == "KHOP"
+    )
+
+    can_xac_minh = tong - hop_le
+
+    print("\nTHONG KE KET QUA")
+    print("-" * 40)
+    print("Tong so luot xe:", tong)
+    print("So luot khop:", hop_le)
+    print("So luot can xac minh:", can_xac_minh)
+
+    if tong > 0:
+        ty_le = hop_le / tong * 100
+        print(f"Ty le xac nhan thanh cong: {ty_le:.2f}%")
+
+
+# 9. CHAY CHUONG TRINH
+if __name__ == "__main__":
+
+    ket_qua = doi_chieu_hai_nguon(
+        rfid_results,
+        anpr_results
+    )
+
+    hien_thi_ket_qua(ket_qua)
+
+    thong_ke(ket_qua)
