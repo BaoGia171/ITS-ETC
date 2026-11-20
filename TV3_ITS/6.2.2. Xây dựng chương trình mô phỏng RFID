@@ -1,0 +1,216 @@
+
+from datetime import datetime
+
+# ==============================
+# 1. CO SO DU LIEU PHUONG TIEN
+# ==============================
+
+vehicles = {
+    "RFID001": {
+        "bien_so": "59A-12345",
+        "loai_xe": "O to",
+        "chu_xe": "Nguyen Van A",
+        "so_du": 500000,
+        "trang_thai": "Hop le"
+    },
+
+    "RFID002": {
+        "bien_so": "59B-67890",
+        "loai_xe": "Xe may",
+        "chu_xe": "Tran Van B",
+        "so_du": 300000,
+        "trang_thai": "Hop le"
+    },
+
+    "RFID003": {
+        "bien_so": "51C-45678",
+        "loai_xe": "O to",
+        "chu_xe": "Le Van C",
+        "so_du": 100000,
+        "trang_thai": "Bi khoa"
+    },
+
+    "RFID004": {
+        "bien_so": "60A-11223",
+        "loai_xe": "O to",
+        "chu_xe": "Pham Van D",
+        "so_du": 200000,
+        "trang_thai": "Hop le"
+    }
+}
+
+# Lich su nhan dien
+history = []
+
+# Muc phi mo phong
+TOLL_FEE = 30000
+
+
+# ==============================
+# 2. MO PHONG DOC THE RFID
+# ==============================
+
+def read_rfid():
+    print("\n--- DOC THE RFID ---")
+    tag_id = input("Nhap ma RFID: ").strip().upper()
+
+    return tag_id
+
+
+# ==============================
+# 3. KIEM TRA VA NHAN DIEN
+# ==============================
+
+def identify_vehicle(tag_id):
+
+    print("\nDang kiem tra the RFID...")
+
+    # Kiem tra ma the co ton tai
+    if tag_id not in vehicles:
+
+        print("Khong tim thay ma RFID!")
+        print("Nhan dien that bai.")
+
+        history.append({
+            "ma_rfid": tag_id,
+            "thoi_gian": datetime.now(),
+            "ket_qua": "That bai"
+        })
+
+        return
+
+    vehicle = vehicles[tag_id]
+
+    # Kiem tra trang thai the
+    if vehicle["trang_thai"] != "Hop le":
+
+        print("The RFID da bi khoa!")
+        print("Phuong tien khong duoc phep qua tram.")
+
+        history.append({
+            "ma_rfid": tag_id,
+            "thoi_gian": datetime.now(),
+            "ket_qua": "The bi khoa"
+        })
+
+        return
+
+    # Kiem tra so du tai khoan
+    if vehicle["so_du"] < TOLL_FEE:
+
+        print("Tai khoan khong du so du!")
+        print("Khong the thuc hien giao dich.")
+
+        history.append({
+            "ma_rfid": tag_id,
+            "thoi_gian": datetime.now(),
+            "ket_qua": "Khong du so du"
+        })
+
+        return
+
+    # Tru phi qua tram
+    vehicle["so_du"] -= TOLL_FEE
+
+    # Hien thi ket qua
+    print("\n===== NHAN DIEN THANH CONG =====")
+    print("Ma RFID:", tag_id)
+    print("Bien so:", vehicle["bien_so"])
+    print("Loai xe:", vehicle["loai_xe"])
+    print("Chu xe:", vehicle["chu_xe"])
+    print("Phi qua tram:", TOLL_FEE, "VND")
+    print("So du con lai:", vehicle["so_du"], "VND")
+    print("Trang thai: Duoc phep qua tram")
+
+    # Luu lich su
+    history.append({
+        "ma_rfid": tag_id,
+        "thoi_gian": datetime.now(),
+        "ket_qua": "Thanh cong"
+    })
+
+
+# ==============================
+# 4. HIEN THI DANH SACH XE
+# ==============================
+
+def display_vehicles():
+
+    print("\n===== DANH SACH PHUONG TIEN =====")
+
+    for tag_id, vehicle in vehicles.items():
+
+        print("-----------------------------")
+        print("Ma RFID:", tag_id)
+        print("Bien so:", vehicle["bien_so"])
+        print("Loai xe:", vehicle["loai_xe"])
+        print("Chu xe:", vehicle["chu_xe"])
+        print("So du:", vehicle["so_du"], "VND")
+        print("Trang thai:", vehicle["trang_thai"])
+
+
+# ==============================
+# 5. HIEN THI LICH SU NHAN DIEN
+# ==============================
+
+def display_history():
+
+    print("\n===== LICH SU NHAN DIEN =====")
+
+    if len(history) == 0:
+        print("Chua co du lieu nhan dien.")
+        return
+
+    for item in history:
+
+        print("-----------------------------")
+        print("Ma RFID:", item["ma_rfid"])
+        print("Thoi gian:",
+              item["thoi_gian"].strftime("%d/%m/%Y %H:%M:%S"))
+        print("Ket qua:", item["ket_qua"])
+
+
+# ==============================
+# 6. CHUONG TRINH CHINH
+# ==============================
+
+def main():
+
+    while True:
+
+        print("\n================================")
+        print("   HE THONG MO PHONG RFID - ETC")
+        print("================================")
+        print("1. Doc the va nhan dien xe")
+        print("2. Xem danh sach phuong tien")
+        print("3. Xem lich su nhan dien")
+        print("4. Thoat chuong trinh")
+
+        choice = input("Chon chuc nang: ")
+
+        if choice == "1":
+
+            tag_id = read_rfid()
+            identify_vehicle(tag_id)
+
+        elif choice == "2":
+
+            display_vehicles()
+
+        elif choice == "3":
+
+            display_history()
+
+        elif choice == "4":
+
+            print("Ket thuc chuong trinh RFID.")
+            break
+
+        else:
+
+            print("Lua chon khong hop le!")
+
+
+# Chay chuong trinh
+if __name__ == "__main__":
+    main()
