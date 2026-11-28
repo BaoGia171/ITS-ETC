@@ -1,0 +1,5 @@
+﻿~$*
+~WRL*.tmp
+.venv/
+__pycache__/
+.idea/
